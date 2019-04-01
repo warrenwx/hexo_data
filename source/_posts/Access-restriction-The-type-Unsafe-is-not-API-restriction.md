@@ -8,8 +8,8 @@ Generally, we can see this in eclipse, as visit a non-public API is forbidden, s
 steps as follow:
 
 #### step1. find project properties, and click on 'build path'
-[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/1.png)](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/2.png)
+[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20181025153958.png)
 #### step2. double click 'Access rules' or just edit it
-[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/3.png)](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/4.png)
+[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20181025154023.png)
 #### step3. add a 'rule', fill blanks like this. project rebuild.
-[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/5.png)](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/6.png)
+[![](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20181025154219.png)

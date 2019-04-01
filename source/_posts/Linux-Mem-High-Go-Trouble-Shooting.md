@@ -3,27 +3,27 @@ title: Linux-Mem-High-Go-Trouble-Shooting
 date: 2018-11-02 17:50:59
 tags:
 ---
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/1.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/1.png)
 
 memory rise up to 90%, process was killed.
 
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/2.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/2.png)
 
 the incoming throughput is normal, at 00:00
 
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/3.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/3.png)
 
 the outcoming throughput rise abruptly, which last 4 mins (23:59 – 00:03). I think it is an occasion that concurrent files uploading.
 
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/4.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/4.png)
 
 establish tcp connections, which last 8 mins (23:59 – 00:07)
 
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/5.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/5.png)
 
 close connections by itself, which last 4 mins (23:59 – 00:03)
 
-![image1](https://raw.githubusercontent.com/warrenwx/warrenwx_hexo/master/20181102/6.png)
+![image1](https://raw.githubusercontent.com/warrenwx/hexo_data/master/files/20181102/6.png)
 
 analysis: at the beginning of 23:59:00, 7.6k connections will be generated. At 00:00, connections start to become closed. 00:03:00 half of the connections were fully released
 
