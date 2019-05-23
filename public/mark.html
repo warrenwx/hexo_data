@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <title>
+        水印工具
+    </title>
+
+</head>
+<script>
+    var canvas;
+    var ctx;
+    var txtLabel;
+    var imageFile;
+    var targetSize =1920;
+    function loadEnv() {
+        canvas = document.getElementById("canvas");
+        txtLabel = document.getElementById("field_name");
+        ctx = canvas.getContext("2d");
+        canvas.width = targetSize;// window.innerWidth * 0.8;
+        canvas.height = targetSize*3/4;//window.innerHeight * 0.8;
+        ChangeText("仅供xxx使用");
+    }
+    function ChangeText(text) {
+        ctx.fillStyle = "#EEEEEE";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (imageFile) {
+            ctx.drawImage(imageFile, 0, 0, canvas.width, canvas.height);
+        }
+        if (text) {
+            var markTxt = "";
+            // lazy
+            var space ="";
+            for (var n = 0; n < text.length; n++) {
+                space +="  ";
+            }
+            for (var n = 0; n < 20; n++) {
+                markTxt += text +space;
+            }
+
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.font = ' 35px Arial';  //字体 大小
+            ctx.fillStyle = 'rgba(12,0,0,0.2)'; //颜色 
+            ctx.rotate(-0.3);
+            // lazy
+            for (var i = 0; i < canvas.height*2; i += 200) {
+                ctx.fillText(markTxt, 0 +i, i);
+            }
+            ctx.rotate(0.3);
+        }
+    }
+    function OpenImageFile(formreg) {
+        btn = document.getElementById("btn_open")
+        btn.value = "";
+
+        btn.onchange = function () {
+            var file = btn.files[0];
+            console.log(file.size);
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                //    console.log(e.target.result);
+                // scaleImage(e.target.result, function(blob){})
+                var image = new Image();
+                image.src = e.target.result;
+                image.onload = function () {
+                    var max = image.width> image.height? image.width:image.height;
+                    var newWidth =image.width;
+                    var newHeight =image.height;
+                    if(max>targetSize){
+                        //scale
+                        var scale = targetSize/max;
+                        console.log("scale "+scale);
+                        newWidth = scale*image.width;
+                        newHeight = scale*image.height ;
+                    }
+                    console.log("new size "+newWidth +","+newHeight);
+                    canvas.width  = newWidth;
+                    canvas.height = newHeight;
+                    imageFile = image;
+                    //ctx.drawImage(image, 0, 0);
+                    ChangeText(txtLabel.value);
+                };
+
+            }
+            reader.readAsDataURL(file);
+        }
+        btn.click();
+    }
+    
+</script>
+
+<body onload="loadEnv()">
+
+</body>
+<input id="btn_open" type="file" style="display:none" accept="image/*"  />
+<li class="li_horizental">
+    <a href="#" onclick="OpenImageFile()">Open Image File</a></li>
+水印字符串：
+<input id="field_name" type="text" onchange="ChangeText(this.value)" value="仅供xxx使用" />
+<br/>
+在图片上右键另存为即可保存水印图片。
+<br/>
+<div width="100%" height="100%">
+    <canvas id="canvas" style="border:0px solid #d3d3d3;background:#eeeeee;" />
+</div>
+
+</html>
