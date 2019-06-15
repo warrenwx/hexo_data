@@ -1,0 +1,53 @@
+### 数据库同步 - Canal
+
+####	背景
+
+为了减少维护成本、提高开发效率、同时支持更多的用户 ...... ，应用程序架构从简单到复杂逐步演变。 
+    
+![来自网络](https://github.com/warrenwx/hexo_data/blob/master/files/ARCH.jpg?raw=true)  
+
+数据库作为其中一个重要组件，在整个结构中的位置也逐步发生改变，从单一主从到一主多从、读写分离、负载均衡、多主多从集群，都离不开数据库同步。考虑到数据安全性、网络稳定性、同步效率、维护工作量等，一般数据库同步发生在内网，但是随着业务扩张，异地数据库同步的需求场景开始出现：数据库细粒度镜像、远程数据库备份、业务cache刷新等。
+
+Canal是阿里巴巴B2B公司 Mysql 数据库binlog的增量订阅消费组件，在github开源。
+
+#### Canal 工作原理
+
+类似于Mysql主备复制，Canal Server模拟Mysql slave(类似于Mysql I/O thread)从Master拉取binlog，对binlog进行解析、过滤、分发、放到生产缓冲区，消费者(类似于Mysql SQL thread)再从Canal Server同步消费，Server和Client之间使用protobuf协议封装消息类型。
+
+![来自网络](https://camo.githubusercontent.com/46c626b4cde399db43b2634a7911a04aecf273a0/687474703a2f2f646c2e69746579652e636f6d2f75706c6f61642f6174746163686d656e742f303038302f333130372f63383762363762612d333934632d333038362d393537372d3964623035626530346339352e6a7067) 
+
+#### Canal 优势和缺点
+
+相对于Mysql主从同步，Canal跨网段同步时能避免数据安全、同步效率等问题。对于特殊业务场景Canal易于灵活扩展。由于Canal基于Mysql Row模式，因此产生的数据量较大，尤其在源数据库进行数据字段的增删时。
+
+#### 性能
+
+由于binglog处理场景要求整体处理必须是串行，因此性能至关重要。Canal Server 单纯binlog吞吐量可以达到100M/s。由于Client与Server之前需要同步处理，因此最大化Client处理效率成为整个同步的关键。Client当前使用Redis作为多线程任务队列，针对不同表进行同步消费，在优化“同步”效率的基础上保证数据库操作顺序。
+
+#### 高可用
+
+Canal Server/Client通过Zookeeper实现failover机制，因此能够在内网单台机器故障时仍业务不中断运行，数据库主从通过心跳和丢包率来决定是否切换到另一个备份库。
+
+#### 监控
+Canal Server支持Prometheus + Grafna进行实例级别的带宽、延迟、吞吐量、瓶颈点等数据查看分析；支持对所有实例运行HA主备切换监控和报警；支持所有实例消费binlog位点和数据库实时位点差异监控和报警。
+
+#### 部署结构
+
+![来自网络](https://github.com/warrenwx/hexo_data/blob/master/files/Canal_ARC.png?raw=true) 
+
+
+#### 公司内部应用场景
+
+1. xxx数据产品支持对外提供部分库表底层数据   
+
+xxx数据库日常同步，每天产生文件4w个，总大小约320G，平均处理Mysql TPS约1600；支持约xxx个外部企业用户的日常变更获取和本地数据同步。
+    
+2. xxx数据产品支持外部订阅部分表特定字段的变更监控   
+
+针对部分xxxx关键业务属性字段进行监控，变更记录准实时同步到用户数据库。
+
+3. 大数据实时计算对xxxxx等产品的业务数据实时变更有获取需求  
+
+提供xxxxx产品部分数据库表的实时变更同步到Kafka集群，用于支持大数据实时计算。 
+
+> 上述图片均引自网络
